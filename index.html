@@ -72,6 +72,23 @@
       letter-spacing: 0.08em;
       opacity: 0.75;
     }
+.cat-mosaic {
+  position: relative;
+  width: 400px; /* width of final image */
+  height: 400px; /* height of final image */
+  margin: 2rem auto 0;
+  perspective: 1000px;
+}
+
+.cat-square {
+  position: absolute;
+  width: 20px; /* size of each square */
+  height: 20px;
+  background-image: url('images/cat.png'); /* <- updated to cat.png */
+  background-size: 400px 400px; /* match container size */
+  transition: all 1s ease;
+}
+
   </style>
 </head>
 <body>
@@ -81,7 +98,49 @@
     <div class="hello">hello world</div>
     <div class="names">Jack Morrissey, Sophie Mearns, Ivan Mairesse, and Sam Warford</div>
     <p>archive / notes / experiments</p>
+    <div class="cat-mosaic"></div>
   </main>
+<script>
+    const mosaic = document.querySelector('.cat-mosaic');
+    const rows = 20; // number of squares vertically
+    const cols = 20; // number of squares horizontally
+    const containerWidth = 400;
+    const containerHeight = 400;
+    const squareSize = containerWidth / cols;
+
+    let squares = [];
+
+    // create the squares
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const square = document.createElement('div');
+        square.classList.add('cat-square');
+
+        // set background position to show correct part of the image
+        square.style.backgroundPosition = `-${x * squareSize}px -${y * squareSize}px`;
+
+        // start at random bottom positions
+        square.style.left = `${Math.random() * containerWidth}px`;
+        square.style.top = `${containerHeight + Math.random() * 100}px`; // offscreen bottom
+        mosaic.appendChild(square);
+        squares.push({el: square, x: x * squareSize, y: y * squareSize});
+      }
+    }
+
+    // animate squares as you scroll
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const maxScroll = document.body.scrollHeight - window.innerHeight;
+
+      // calculate progress from 0 → 1
+      const progress = Math.min(scrollTop / maxScroll, 1);
+
+      squares.forEach(sq => {
+        sq.el.style.left = `${sq.x * progress + (Math.random() * (1 - progress) * containerWidth * 0.5)}px`;
+        sq.el.style.top = `${sq.y * progress + containerHeight + Math.random() * (1 - progress) * 100}px`;
+      });
+    });
+  </script>
 
 </body>
 </html>
