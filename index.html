@@ -29,11 +29,22 @@
       font-size: 1.2rem;
     }
 
-    .cat-mosaic {
+    p {
+      margin-bottom: 2rem;
+    }
+
+    /* Sticky cat wrapper */
+    .cat-wrapper {
+      height: 100vh; /* full viewport height */
       position: relative;
+    }
+
+    .cat-mosaic {
+      position: sticky;
+      top: 50px; /* stays near top of viewport */
       width: 400px;
       height: 400px;
-      margin: 2rem auto;
+      margin: 0 auto;
       perspective: 1000px;
     }
 
@@ -43,7 +54,7 @@
       height: 20px;
       background-image: url('images/cat.png'); /* make sure cat.png is inside images folder */
       background-size: 400px 400px; /* match container size */
-      transition: all 1s ease;
+      transition: all 0.5s ease;
     }
   </style>
 </head>
@@ -55,62 +66,70 @@
     <div class="names">Jack Morrissey, Sophie Mearns, Ivan Mairesse, and Sam Warford</div>
     <p>archive / notes / experiments</p>
 
-    <!-- Cat mosaic -->
-    <div class="cat-mosaic"></div>
-    <div style="height: 2000px;"></div>
+    <!-- Cat mosaic with sticky wrapper -->
+    <div class="cat-wrapper">
+      <div class="cat-mosaic"></div>
+    </div>
+
+    <!-- Optional extra scroll space -->
+    <div style="height: 400px;"></div>
   </main>
 
-<script>
-const mosaic = document.querySelector('.cat-mosaic');
-const rows = 20;
-const cols = 20;
-const containerWidth = 400;
-const containerHeight = 400;
-const squareSize = containerWidth / cols;
+  <script>
+    const mosaic = document.querySelector('.cat-mosaic');
+    const rows = 20;
+    const cols = 20;
+    const containerWidth = 400;
+    const containerHeight = 400;
+    const squareSize = containerWidth / cols;
 
-let squares = [];
+    let squares = [];
 
-// create the squares
-for (let y = 0; y < rows; y++) {
-  for (let x = 0; x < cols; x++) {
-    const square = document.createElement('div');
-    square.classList.add('cat-square');
+    // create squares
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const square = document.createElement('div');
+        square.classList.add('cat-square');
 
-    // correct background position
-    square.style.backgroundPosition = `-${x * squareSize}px -${y * squareSize}px`;
+        // correct background position
+        square.style.backgroundPosition = `-${x * squareSize}px -${y * squareSize}px`;
 
-    // start at random scattered positions
-    const randomX = Math.random() * containerWidth * 1.5 - containerWidth/2;
-    const randomY = Math.random() * containerHeight * 1.5;
-    square.style.left = `${randomX}px`;
-    square.style.top = `${randomY}px`;
+        // start scattered randomly
+        const randomX = Math.random() * containerWidth * 1.5 - containerWidth/2;
+        const randomY = Math.random() * containerHeight * 1.5;
+        square.style.left = `${randomX}px`;
+        square.style.top = `${randomY}px`;
 
-    mosaic.appendChild(square);
+        mosaic.appendChild(square);
 
-    squares.push({
-      el: square,
-      targetX: x * squareSize,
-      targetY: y * squareSize,
-      startX: randomX,
-      startY: randomY
+        squares.push({
+          el: square,
+          targetX: x * squareSize,
+          targetY: y * squareSize,
+          startX: randomX,
+          startY: randomY
+        });
+      }
+    }
+
+    // animate squares based on scroll
+    const wrapper = document.querySelector('.cat-wrapper');
+
+    window.addEventListener('scroll', () => {
+      const rect = wrapper.getBoundingClientRect();
+      const start = window.innerHeight;
+      const end = 0;
+      let progress = 1 - (rect.top - end) / (start - end);
+      progress = Math.min(Math.max(progress, 0), 1); // clamp 0 → 1
+
+      squares.forEach(sq => {
+        sq.el.style.left = `${sq.startX + (sq.targetX - sq.startX) * progress}px`;
+        sq.el.style.top = `${sq.startY + (sq.targetY - sq.startY) * progress}px`;
+      });
     });
-  }
-}
-
-// animate squares based on scroll
-window.addEventListener('scroll', () => {
-  const scrollTop = window.scrollY;
-  const maxScroll = document.body.scrollHeight - window.innerHeight;
-  const progress = Math.min(scrollTop / maxScroll, 1); // 0 → 1
-
-  squares.forEach(sq => {
-    // interpolate from start → target
-    sq.el.style.left = `${sq.startX + (sq.targetX - sq.startX) * progress}px`;
-    sq.el.style.top = `${sq.startY + (sq.targetY - sq.startY) * progress}px`;
-  });
-});
-</script>
+  </script>
 
 </body>
 </html>
+
 
