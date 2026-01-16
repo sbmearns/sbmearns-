@@ -3,107 +3,66 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IS 270 website</title>
-
-  <!-- Indie / archive-style font -->
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
-
+  <title>IS 270 Website</title>
   <style>
-    :root {
-      --deep-green: #4a5a2a; /* deep earthy olive green */
-      --off-white: #f5efe9;
-      --pastel-yellow: #f3e6a2;
-    }
-
-    * {
-      box-sizing: border-box;
+    body {
       margin: 0;
       padding: 0;
-    }
-
-    body {
-      height: 100vh;
-      background: var(--deep-green);
-      color: var(--off-white);
-      font-family: 'Cormorant Garamond', serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-family: 'Courier New', Courier, monospace; /* indie artsy font style */
+      background-color: #556B2F; /* deep earthy olive green */
+      color: #FFF8DC; /* cream/pastel yellow text */
       text-align: center;
-      overflow: hidden;
-    }
-
-    /* subtle film grain effect */
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events: none;
     }
 
     h1 {
-      font-size: clamp(3rem, 8vw, 6rem);
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
+      margin-top: 2rem;
+      font-size: 3rem;
     }
 
     .hello {
-      margin-top: 1.2rem;
-      font-size: 1.4rem;
-      letter-spacing: 0.2em;
-      color: var(--pastel-yellow);
-      text-transform: lowercase;
-      opacity: 0.9;
+      font-size: 2rem;
+      margin: 1rem 0;
     }
 
     .names {
-      margin-top: 0.8rem;
+      margin: 1rem 0;
       font-size: 1.2rem;
-      letter-spacing: 0.1em;
-      color: var(--pastel-yellow);
-      opacity: 0.85;
     }
 
-    p {
-      margin-top: 1rem;
-      font-size: 1.05rem;
-      letter-spacing: 0.08em;
-      opacity: 0.75;
+    .cat-mosaic {
+      position: relative;
+      width: 400px;
+      height: 400px;
+      margin: 2rem auto;
+      perspective: 1000px;
     }
-.cat-mosaic {
-  position: relative;
-  width: 400px; /* width of final image */
-  height: 400px; /* height of final image */
-  margin: 2rem auto 0;
-  perspective: 1000px;
-}
 
-.cat-square {
-  position: absolute;
-  width: 20px; /* size of each square */
-  height: 20px;
-  background-image: url('images/cat.png'); /* <- updated to cat.png */
-  background-size: 400px 400px; /* match container size */
-  transition: all 1s ease;
-}
-
+    .cat-square {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-image: url('images/cat.png'); /* make sure cat.png is inside images folder */
+      background-size: 400px 400px; /* match container size */
+      transition: all 1s ease;
+    }
   </style>
 </head>
 <body>
 
   <main>
-    <h1>IS 270 website</h1>
+    <h1>IS 270 Website</h1>
     <div class="hello">hello world</div>
     <div class="names">Jack Morrissey, Sophie Mearns, Ivan Mairesse, and Sam Warford</div>
     <p>archive / notes / experiments</p>
+
+    <!-- Cat mosaic -->
     <div class="cat-mosaic"></div>
   </main>
-<script>
+
+  <script>
     const mosaic = document.querySelector('.cat-mosaic');
-    const rows = 20; // number of squares vertically
-    const cols = 20; // number of squares horizontally
+    const rows = 20;
+    const cols = 20;
     const containerWidth = 400;
     const containerHeight = 400;
     const squareSize = containerWidth / cols;
@@ -115,24 +74,21 @@
       for (let x = 0; x < cols; x++) {
         const square = document.createElement('div');
         square.classList.add('cat-square');
-
-        // set background position to show correct part of the image
         square.style.backgroundPosition = `-${x * squareSize}px -${y * squareSize}px`;
 
         // start at random bottom positions
         square.style.left = `${Math.random() * containerWidth}px`;
-        square.style.top = `${containerHeight + Math.random() * 100}px`; // offscreen bottom
+        square.style.top = `${containerHeight + Math.random() * 100}px`; 
         mosaic.appendChild(square);
+
         squares.push({el: square, x: x * squareSize, y: y * squareSize});
       }
     }
 
-    // animate squares as you scroll
+    // animate squares on scroll
     window.addEventListener('scroll', () => {
       const scrollTop = window.scrollY;
       const maxScroll = document.body.scrollHeight - window.innerHeight;
-
-      // calculate progress from 0 → 1
       const progress = Math.min(scrollTop / maxScroll, 1);
 
       squares.forEach(sq => {
@@ -144,3 +100,4 @@
 
 </body>
 </html>
+
